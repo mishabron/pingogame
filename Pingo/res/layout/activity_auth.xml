@@ -1,0 +1,81 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" 
+    android:background="@drawable/bg_card"   
+    android:weightSum="1.0">
+
+    <RelativeLayout
+        android:id="@+id/topBanner"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="0.50"
+        android:gravity="top" >
+
+        <TextView
+            android:id="@+id/message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="79dp"
+            android:layout_marginEnd="68dp"
+            android:layout_marginStart="68dp"            
+            android:text="Medium Text"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#808080"
+            android:textSize="24sp" />
+
+        <ProgressBar
+            android:id="@+id/progressBar1"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="4dp"
+            android:layout_below="@+id/message"
+            android:layout_centerHorizontal="true"
+            android:layout_marginEnd="68dp"
+            android:layout_marginStart="68dp"
+            android:layout_marginTop="45dp"
+            android:indeterminateOnly="false"
+            android:max="50" />
+
+        <EditText
+            android:id="@+id/cardNumber"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/progressBar1"
+            android:layout_centerHorizontal="true"
+            android:layout_marginEnd="80dp"
+            android:layout_marginStart="80dp"
+            android:layout_marginTop="48dp"
+            android:background="@drawable/abc"
+            android:digits="0123456789.,"
+            android:ems="10"
+            android:inputType="number"
+            android:maxLength="12"
+            android:textColor="#808080"
+            android:textSize="24sp" >
+
+            <requestFocus />
+        </EditText>
+
+    </RelativeLayout>
+
+   <RelativeLayout
+       android:id="@+id/bottomBanner"
+       android:layout_width="fill_parent"
+       android:layout_height="fill_parent"
+       android:layout_weight="0.50" >
+
+       <Button
+           android:id="@+id/authButton"
+           android:layout_width="100dp"
+           android:layout_height="100dp"
+           android:layout_alignParentTop="true"
+           android:layout_centerHorizontal="true"
+           android:layout_marginTop="44dp"
+           android:background="@android:color/transparent"/>
+
+   </RelativeLayout>
+  
+</LinearLayout>

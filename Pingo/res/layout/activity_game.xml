@@ -1,0 +1,133 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_game"
+    android:orientation="vertical"
+    android:weightSum="1.0" >
+
+    <RelativeLayout
+        android:id="@+id/topBanner"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="0.5">
+
+        <View
+            android:id="@+id/dummyTop"
+            android:layout_width="1dp"
+            android:layout_height="fill_parent"
+            android:layout_centerHorizontal="true" />
+
+        <ImageView
+            android:id="@+id/pingo1"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:layout_alignParentBottom="true"
+            android:layout_toStartOf="@+id/pingo2"
+            android:layout_marginBottom="21dp"
+            android:src="@drawable/pingo" 
+            android:background="@drawable/green_ring" />
+        
+        <ImageView
+            android:id="@+id/pingo2"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:layout_alignParentBottom="true"
+            android:layout_toStartOf="@+id/dummyTop"
+            android:layout_marginBottom="21dp"
+            android:src="@drawable/seven" 
+            android:background="@drawable/red_ring"   />        
+        
+        <ImageView
+            android:id="@+id/pingo3"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:layout_alignParentBottom="true"
+            android:layout_toEndOf="@+id/dummyTop"
+            android:layout_marginBottom="21dp"
+            android:src="@drawable/seven" 
+           android:background="@drawable/green_ring" /> 
+                    
+        <ImageView
+            android:id="@+id/pingo4"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:layout_alignParentBottom="true"
+            android:layout_toEndOf="@+id/pingo3"
+            android:layout_marginBottom="21dp"
+            android:src="@drawable/seven" />
+
+        <ProgressBar
+            android:id="@+id/progressBar1"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="4dp"
+            android:layout_above="@+id/pingo1"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="50dp"
+            android:layout_marginEnd="68dp"
+            android:layout_marginStart="68dp"
+            android:indeterminateOnly="false"
+            android:max="50" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/bottomBanner"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="0.5" >
+
+        <View
+            android:id="@+id/dummyBottom"
+            android:layout_width="fill_parent"
+            android:layout_height="10dp"
+            android:layout_centerVertical="true" />
+
+        <Button
+            android:id="@+id/selectNext"
+            android:layout_width="60dp"
+            android:layout_height="50dp"
+            android:layout_above="@+id/dummyBottom"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="17dp"
+			android:background="@android:color/transparent"/>
+        
+        <Button
+            android:id="@+id/selectPrevious"
+            android:layout_width="60dp"
+            android:layout_height="50dp"
+            android:layout_above="@+id/dummyBottom"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="17dp"
+			android:background="@android:color/transparent"/>
+
+        <Button
+            android:id="@+id/upNumber"
+            android:layout_width="60dp"
+            android:layout_height="30dp"
+            android:layout_above="@+id/selectPrevious"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="34dp"
+            android:background="@android:color/transparent" />
+        
+        <Button
+            android:id="@+id/downNumber"
+            android:layout_width="60dp"
+            android:layout_height="30dp"
+            android:layout_below="@+id/selectPrevious"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="34dp"
+            android:background="@android:color/transparent" />
+
+       <Button
+           android:id="@+id/hit"
+           android:layout_width="60dp"
+           android:layout_height="60dp"
+           android:layout_alignBaseline="@+id/selectNext"
+           android:layout_alignBottom="@+id/selectNext"
+           android:layout_centerHorizontal="true"
+           android:background="@android:color/transparent" />
+
+    </RelativeLayout>
+  
+</LinearLayout>
