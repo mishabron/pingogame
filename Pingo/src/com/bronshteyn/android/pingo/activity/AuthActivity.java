@@ -96,7 +96,7 @@ public class AuthActivity extends Activity {
 			request.setCardID(cardId[0]);
 			
 			try {
-				//runOnUiThread(progressUpdate);
+
 				progressThread = new Thread(progressIndicator);
 				progressThread.start();
 				Cardsgame.Builder builder = new Cardsgame.Builder(AndroidHttp.newCompatibleTransport(), new GsonFactory(), null);

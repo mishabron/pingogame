@@ -7,14 +7,13 @@ public class Game {
 	private static Game game;
 	private Long cardId;
 	private String authTocken;
-	private Integer guesses;
-	private Integer triesLeft1;
-	private Integer triesLeft2;
-	private Integer triesLeft3;
-	private Integer triesLeft4;
+	private Integer guesses = 0;
+	private Integer triesLeft1 = 4;
+	private Integer triesLeft2 = 4;
+	private Integer triesLeft3 = 4;
+	private Integer triesLeft4 = 4;
 	private Boolean cardPlayed;
-	
-	
+		
 	protected Game() {
 
 	}
@@ -61,7 +60,7 @@ public class Game {
 		return guesses;
 	}
 
-	public void setGuesses(Integer guesses) {
+	public synchronized void  setGuesses(Integer guesses) {
 		this.guesses = guesses;
 	}
 
@@ -104,7 +103,6 @@ public class Game {
 	public void setCardPlayed(Boolean cardPlayed) {
 		this.cardPlayed = cardPlayed;
 	}
-	
 	
 
 }
