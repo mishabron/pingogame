@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.HapticFeedbackConstants;
 import android.view.MotionEvent;
 import android.view.View;
@@ -18,7 +17,6 @@ import com.bronshteyn.android.pingo.R;
 import com.bronshteyn.android.pingo.model.Pingo;
 import com.bronshteyn.android.pingo.model.Pingo.AnimatorCallnack;
 import com.bronshteyn.android.pingo.model.Pingo.HitCallback;
-import com.bronshteyn.android.pingo.util.ProgressIndicator;
 
 public class GameActivity extends Activity {
 
@@ -36,8 +34,6 @@ public class GameActivity extends Activity {
 	private int curentNUmber;
 	private Button hitButton;
 
-	private Handler mHandler = new Handler();
-	private ProgressIndicator progressIndicator;
 	private ProgressBar progressBar;
 	private int numberSelect;
 	private int digitSelect;
@@ -47,17 +43,15 @@ public class GameActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_game);
 
+		progressBar = (ProgressBar) findViewById(R.id.gameProgress);
+
 		digitSelect = R.raw.number_select;
 		numberSelect = R.raw.digit_select;
 
-		pingo1 = new Pingo(1, 10, false, false, false,
-				(ImageView) findViewById(R.id.pingo1));
-		pingo2 = new Pingo(2, 10, false, false, false,
-				(ImageView) findViewById(R.id.pingo2));
-		pingo3 = new Pingo(3, 10, false, false, false,
-				(ImageView) findViewById(R.id.pingo3));
-		pingo4 = new Pingo(4, 10, false, false, false,
-				(ImageView) findViewById(R.id.pingo4));
+		pingo1 = new Pingo(1, 10, false, false, false, (ImageView) findViewById(R.id.pingo1), progressBar);
+		pingo2 = new Pingo(2, 10, false, false, false, (ImageView) findViewById(R.id.pingo2), progressBar);
+		pingo3 = new Pingo(3, 10, false, false, false, (ImageView) findViewById(R.id.pingo3), progressBar);
+		pingo4 = new Pingo(4, 10, false, false, false, (ImageView) findViewById(R.id.pingo4), progressBar);
 
 		pingos[0] = pingo1;
 		pingos[1] = pingo2;
@@ -65,9 +59,6 @@ public class GameActivity extends Activity {
 		pingos[3] = pingo4;
 
 		activePingo = 0;
-
-		progressBar = (ProgressBar) findViewById(R.id.gameProgress);
-		progressIndicator = new ProgressIndicator(progressBar, mHandler);
 
 		// define game controls
 		final Button nextButton = (Button) findViewById(R.id.selectNext);
@@ -88,8 +79,7 @@ public class GameActivity extends Activity {
 
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
-				nextButton
-						.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+				nextButton.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
 				;
 				return false;
 			}
@@ -114,8 +104,7 @@ public class GameActivity extends Activity {
 
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
-				previousButton
-						.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+				previousButton.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
 				return false;
 			}
 		});
@@ -146,8 +135,7 @@ public class GameActivity extends Activity {
 						}
 					};
 
-					pingos[activePingo].rotate(ROTATE_HORIZONTAL, 500, 0, 0,
-							360, flippCallback);
+					pingos[activePingo].rotate(ROTATE_HORIZONTAL, 500, 0, 0, 360, flippCallback);
 				}
 			}
 		});
@@ -186,8 +174,7 @@ public class GameActivity extends Activity {
 
 						}
 					};
-					pingos[activePingo].rotate(ROTATE_HORIZONTAL, 500, 0, 360,
-							0, flippCallback);
+					pingos[activePingo].rotate(ROTATE_HORIZONTAL, 500, 0, 360, 0, flippCallback);
 				}
 			}
 		});
@@ -196,8 +183,7 @@ public class GameActivity extends Activity {
 
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
-				downButton
-						.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+				downButton.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
 				return false;
 			}
 		});
@@ -205,13 +191,11 @@ public class GameActivity extends Activity {
 		hitButton = (Button) findViewById(R.id.hit);
 		hitButton.setOnClickListener(new OnClickListener() {
 
-			Thread progressThread;
-
 			final HitCallback hitCallback3 = new HitCallback() {
 
 				@Override
 				public synchronized void onHitComplete() {
-					progressThread.interrupt();
+					progressBar.setProgress(0);
 					activePingo = 0;
 					pingos[activePingo].select(true);
 				}
@@ -220,14 +204,9 @@ public class GameActivity extends Activity {
 
 				@Override
 				public synchronized void onHitComplete() {
-
-					progressThread.interrupt();
-
-					progressThread = new Thread(progressIndicator);
-					progressThread.start();
+					progressBar.setProgress(0);
 					if (pingos[3].getCanPlay()) {
-						pingos[3]
-								.rotate(ROTATE_VERTICAL, 500, -1, 360, 0, null);
+						pingos[3].rotate(ROTATE_HORIZONTAL, 500, -1, 360, 0, null);
 					}
 					pingos[3].pingoHit(4, hitCallback3);
 
@@ -237,12 +216,9 @@ public class GameActivity extends Activity {
 
 				@Override
 				public synchronized void onHitComplete() {
-					progressThread.interrupt();
-					progressThread = new Thread(progressIndicator);
-					progressThread.start();
+					progressBar.setProgress(0);
 					if (pingos[2].getCanPlay()) {
-						pingos[2]
-								.rotate(ROTATE_VERTICAL, 500, -1, 360, 0, null);
+						pingos[2].rotate(ROTATE_HORIZONTAL, 500, -1, 360, 0, null);
 					}
 					pingos[2].pingoHit(3, hitCallback2);
 				}
@@ -251,13 +227,9 @@ public class GameActivity extends Activity {
 
 				@Override
 				public synchronized void onHitComplete() {
-					progressThread.interrupt();
-
-					progressThread = new Thread(progressIndicator);
-					progressThread.start();
+					progressBar.setProgress(0);
 					if (pingos[1].getCanPlay()) {
-						pingos[1]
-								.rotate(ROTATE_VERTICAL, 500, -1, 360, 0, null);
+						pingos[1].rotate(ROTATE_HORIZONTAL, 500, -1, 360, 0, null);
 					}
 					pingos[1].pingoHit(2, hitCallback1);
 				}
@@ -267,11 +239,8 @@ public class GameActivity extends Activity {
 			public void onClick(View v) {
 
 				hitButton.setEnabled(false);
-				progressThread = new Thread(progressIndicator);
-
-				progressThread.start();
 				if (pingos[0].getCanPlay()) {
-					pingos[0].rotate(ROTATE_VERTICAL, 500, -1, 360, 0, null);
+					pingos[0].rotate(ROTATE_HORIZONTAL, 500, -1, 360, 0, null);
 				}
 				pingos[0].pingoHit(1, hitCallback0);
 			}
@@ -282,8 +251,7 @@ public class GameActivity extends Activity {
 
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
-				hitButton
-						.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+				hitButton.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
 				return false;
 			}
 		});
@@ -316,8 +284,7 @@ public class GameActivity extends Activity {
 			@Override
 			public void onAnimationStart() {
 
-				pingo4.rotate(ROTATE_HORIZONTAL, 400, 7, 90, 360,
-						spinn1Callback4);
+				pingo4.rotate(ROTATE_HORIZONTAL, 400, 7, 90, 360, spinn1Callback4);
 			}
 		};
 
@@ -329,8 +296,7 @@ public class GameActivity extends Activity {
 
 			@Override
 			public void onAnimationStart() {
-				pingo3.rotate(ROTATE_HORIZONTAL, 400, 6, 20, 360,
-						spinn1Callback3);
+				pingo3.rotate(ROTATE_HORIZONTAL, 400, 6, 20, 360, spinn1Callback3);
 			}
 		};
 
@@ -342,8 +308,7 @@ public class GameActivity extends Activity {
 
 			@Override
 			public void onAnimationStart() {
-				pingo2.rotate(ROTATE_HORIZONTAL, 400, 4, 90, 360,
-						spinn1Callback2);
+				pingo2.rotate(ROTATE_HORIZONTAL, 400, 4, 90, 360, spinn1Callback2);
 
 			}
 		};
@@ -354,8 +319,7 @@ public class GameActivity extends Activity {
 	private void setFace(int number) {
 		pingos[activePingo].setNumber(number);
 
-		if (pingos[0].isSet() && pingos[1].isSet() && pingos[2].isSet()
-				&& pingos[3].isSet()) {
+		if (pingos[0].isSet() && pingos[1].isSet() && pingos[2].isSet() && pingos[3].isSet()) {
 			hitButton.setEnabled(true);
 		}
 	}
@@ -372,5 +336,18 @@ public class GameActivity extends Activity {
 			}
 		});
 		mp.start();
+	}
+
+	private int getNextPingo(int currentPingo) {
+
+		int nextPingo = currentPingo;
+
+		if (currentPingo < LIMIT && pingos[currentPingo + 1].getCanPlay()) {
+			nextPingo++;
+		} else if (currentPingo < LIMIT && !pingos[currentPingo + 1].getCanPlay()) {
+
+		}
+
+		return nextPingo;
 	}
 }

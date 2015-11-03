@@ -5,6 +5,7 @@ import java.io.IOException;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.os.AsyncTask;
@@ -46,8 +47,12 @@ public class AuthActivity extends Activity {
 		setContentView(R.layout.activity_auth);
 
 		final EditText cardNumberInput = (EditText) findViewById(R.id.cardNumber);
+		Typeface font = Typeface.createFromAsset(this.getAssets(), "fonts/Limelight.ttf");
+		cardNumberInput.setTypeface(font);
+
 		message = (TextView) findViewById(R.id.message);
 		message.setText("");
+		message.setTypeface(font);
 
 		progressBar = (ProgressBar) findViewById(R.id.progressBar1);
 
@@ -60,10 +65,8 @@ public class AuthActivity extends Activity {
 			public void onClick(View v) {
 
 				if (!TextUtils.isEmpty(cardNumberInput.getText())) {
-					long cardId = Long.parseLong(cardNumberInput.getText()
-							.toString());
-					AuthinticateAsyncTask authTask = new AuthinticateAsyncTask(
-							AuthActivity.this);
+					long cardId = Long.parseLong(cardNumberInput.getText().toString());
+					AuthinticateAsyncTask authTask = new AuthinticateAsyncTask(AuthActivity.this);
 					authTask.execute(cardId);
 				}
 
@@ -73,16 +76,14 @@ public class AuthActivity extends Activity {
 
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
-				authButton
-						.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+				authButton.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
 				return false;
 			}
 		});
 
 	}
 
-	private class AuthinticateAsyncTask extends
-			AsyncTask<Long, Integer, AuthinticateResponse> {
+	private class AuthinticateAsyncTask extends AsyncTask<Long, Integer, AuthinticateResponse> {
 
 		private Context context;
 		private Long cardId;
@@ -104,9 +105,7 @@ public class AuthActivity extends Activity {
 
 				progressThread = new Thread(progressIndicator);
 				progressThread.start();
-				Cardsgame.Builder builder = new Cardsgame.Builder(
-						AndroidHttp.newCompatibleTransport(),
-						new GsonFactory(), null);
+				Cardsgame.Builder builder = new Cardsgame.Builder(AndroidHttp.newCompatibleTransport(), new GsonFactory(), null);
 				Cardsgame service = builder.build();
 				response = service.authinticate(request).execute();
 			} catch (IOException e) {
@@ -134,16 +133,14 @@ public class AuthActivity extends Activity {
 
 	protected void playTransitionSound() {
 
-		MediaPlayer mp = MediaPlayer.create(AuthActivity.this,
-				R.raw.screen_transition);
+		MediaPlayer mp = MediaPlayer.create(AuthActivity.this, R.raw.screen_transition);
 		mp.setOnCompletionListener(new OnCompletionListener() {
 
 			@Override
 			public void onCompletion(MediaPlayer mp) {
 				mp.release();
 				mp = null;
-				Intent intent = new Intent(getApplicationContext(),
-						GameActivity.class);
+				Intent intent = new Intent(getApplicationContext(), GameActivity.class);
 				startActivity(intent);
 				overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
 				Activity activity = (Activity) AuthActivity.this;

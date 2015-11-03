@@ -9,6 +9,7 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import com.bronshteyn.cardsgame.Cardsgame;
 import com.bronshteyn.cardsgame.model.HitRequest;
@@ -28,6 +29,7 @@ public class Pingo {
 	private Boolean canPlay = true;
 	private ObjectAnimator animation;
 	private HitCallback hitCallback;
+	private ProgressBar progressBar;
 
 	public interface AnimatorCallnack {
 		public void onAnimationEnd();
@@ -40,7 +42,7 @@ public class Pingo {
 	}
 
 	public Pingo(int position, int number, Boolean selected, Boolean loss,
-			Boolean win, ImageView view) {
+			Boolean win, ImageView view, ProgressBar progressBar) {
 
 		this.position = position;
 		this.number = number;
@@ -48,6 +50,7 @@ public class Pingo {
 		this.loss = loss;
 		this.win = win;
 		this.view = view;
+		this.progressBar = progressBar;
 
 		setUI();
 	}
@@ -279,7 +282,23 @@ public class Pingo {
 				e.printStackTrace();
 			}
 
+			// simulate delay
+			for (int i = 0; i < progressBar.getMax(); i++) {
+				publishProgress(i);
+
+				// Do some long loading things
+				try {
+					Thread.sleep(50);
+				} catch (InterruptedException ignore) {
+				}
+			}
 			return response;
+		}
+
+		@Override
+		protected void onProgressUpdate(Integer... values) {
+			super.onProgressUpdate(values);
+			progressBar.setProgress(values[0]);
 		}
 
 		@Override
