@@ -2,6 +2,7 @@ package com.bronshteyn.android.pingo.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.os.Bundle;
@@ -10,11 +11,15 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.bronshteyn.android.pingo.R;
+import com.bronshteyn.android.pingo.model.Game;
 import com.bronshteyn.android.pingo.model.Pingo;
 import com.bronshteyn.android.pingo.model.Pingo.AnimatorCallnack;
 import com.bronshteyn.android.pingo.model.Pingo.HitCallback;
@@ -38,11 +43,17 @@ public class GameActivity extends Activity {
 	private ProgressBar progressBar;
 	private int numberSelect;
 	private int digitSelect;
+	private TextView counter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_game);
+
+		Typeface font = Typeface.createFromAsset(this.getAssets(), "fonts/addcn.ttf");
+		counter = (TextView) findViewById(R.id.counter);
+		counter.setTypeface(font);
+		counter.setText("x" + 0);
 
 		progressBar = (ProgressBar) findViewById(R.id.gameProgress);
 
@@ -217,6 +228,31 @@ public class GameActivity extends Activity {
 					progressBar.setProgress(0);
 					activePingo = getNextPingo(-1);
 					pingos[activePingo].select(true);
+
+					// reset counter
+					final Game game = Game.getInstance();
+					game.setTrials(game.getTrials() + 1);
+
+					Animation slideOutBottom = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.out_bottom);
+					slideOutBottom.setAnimationListener(new Animation.AnimationListener() {
+						@Override
+						public void onAnimationStart(Animation animation) {
+
+						}
+
+						@Override
+						public void onAnimationEnd(Animation animation) {
+							counter.setText("x" + game.getTrials());
+							Animation slideInTop = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.in_top);
+							counter.startAnimation(slideInTop);
+						}
+
+						@Override
+						public void onAnimationRepeat(Animation arg0) {
+						}
+
+					});
+					counter.startAnimation(slideOutBottom);
 				}
 			};
 			final HitCallback hitCallback2 = new HitCallback() {

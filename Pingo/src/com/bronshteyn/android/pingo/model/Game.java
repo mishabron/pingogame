@@ -3,7 +3,7 @@ package com.bronshteyn.android.pingo.model;
 import com.bronshteyn.cardsgame.model.AuthinticateResponse;
 
 public class Game {
-	
+
 	private static Game game;
 	private Long cardId;
 	private String authTocken;
@@ -13,18 +13,20 @@ public class Game {
 	private Integer triesLeft3 = 4;
 	private Integer triesLeft4 = 4;
 	private Boolean cardPlayed;
-		
+	private Integer trials = 0;
+
+	private final int TOATL_TRIALS = 4;
+
 	protected Game() {
 
 	}
 
-	public static Game getInstance(){
-		
-		
-		if (game == null){
+	public static Game getInstance() {
+
+		if (game == null) {
 			game = new Game();
 		}
-		
+
 		return game;
 	}
 
@@ -37,7 +39,7 @@ public class Game {
 		triesLeft1 = result.getTriesleft1();
 		triesLeft2 = result.getTriesleft2();
 		triesLeft3 = result.getTriesleft3();
-		triesLeft4 = result.getTriesleft4();		
+		triesLeft4 = result.getTriesleft4();
 	}
 
 	public Long getCardId() {
@@ -60,7 +62,7 @@ public class Game {
 		return guesses;
 	}
 
-	public synchronized void  setGuesses(Integer guesses) {
+	public synchronized void setGuesses(Integer guesses) {
 		this.guesses = guesses;
 	}
 
@@ -103,6 +105,13 @@ public class Game {
 	public void setCardPlayed(Boolean cardPlayed) {
 		this.cardPlayed = cardPlayed;
 	}
-	
+
+	public Integer getTrials() {
+		return trials;
+	}
+
+	public void setTrials(Integer trials) {
+		this.trials = trials;
+	}
 
 }
