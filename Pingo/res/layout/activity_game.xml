@@ -104,10 +104,10 @@
         <Button
             android:id="@+id/upNumber"
             android:layout_width="60dp"
-            android:layout_height="30dp"
+            android:layout_height="35dp"
             android:layout_above="@+id/selectPrevious"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="34dp"
+            android:layout_marginBottom="30dp"
             android:background="@android:color/transparent" />
         
         <Button
@@ -126,6 +126,18 @@
            android:layout_alignBaseline="@+id/selectNext"
            android:layout_alignBottom="@+id/selectNext"
            android:layout_centerHorizontal="true"
+           android:background="@android:color/transparent" />
+
+       <Button
+           android:id="@+id/reset"
+           android:layout_width="55dp"
+           android:layout_height="55dp"
+           android:layout_alignEnd="@+id/selectNext"
+           android:layout_alignRight="@+id/selectNext"
+           android:layout_below="@+id/downNumber"
+           android:layout_marginEnd="28dp"
+           android:layout_marginRight="28dp"
+           android:layout_marginTop="13dp"
            android:background="@android:color/transparent" />
 
     </RelativeLayout>

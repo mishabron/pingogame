@@ -47,7 +47,7 @@ public class AuthActivity extends Activity {
 		setContentView(R.layout.activity_auth);
 
 		final EditText cardNumberInput = (EditText) findViewById(R.id.cardNumber);
-		Typeface font = Typeface.createFromAsset(this.getAssets(), "fonts/Limelight.ttf");
+		Typeface font = Typeface.createFromAsset(this.getAssets(), "fonts/addcn.ttf");
 		cardNumberInput.setTypeface(font);
 
 		message = (TextView) findViewById(R.id.message);

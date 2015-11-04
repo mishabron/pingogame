@@ -1,6 +1,7 @@
 package com.bronshteyn.android.pingo.activity;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.os.Bundle;
@@ -61,17 +62,38 @@ public class GameActivity extends Activity {
 		activePingo = 0;
 
 		// define game controls
+		final Button resetButton = (Button) findViewById(R.id.reset);
+		resetButton.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				Intent intent = new Intent(getApplicationContext(), AuthActivity.class);
+				startActivity(intent);
+				overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+				Activity activity = (Activity) GameActivity.this;
+				activity.finish();
+			}
+		});
+
+		resetButton.setOnTouchListener(new OnTouchListener() {
+
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				resetButton.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+				return false;
+			}
+		});
+
 		final Button nextButton = (Button) findViewById(R.id.selectNext);
 		nextButton.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 				playSound(numberSelect);
-				if (activePingo < LIMIT) {
-					pingos[activePingo].select(false);
-					activePingo++;
-					pingos[activePingo].select(true);
-				}
+
+				pingos[activePingo].select(false);
+				activePingo = getNextPingo(activePingo);
+				pingos[activePingo].select(true);
 			}
 		});
 
@@ -80,7 +102,6 @@ public class GameActivity extends Activity {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				nextButton.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
-				;
 				return false;
 			}
 		});
@@ -91,12 +112,10 @@ public class GameActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				playSound(numberSelect);
-				if (activePingo > 0) {
-					pingos[activePingo].select(false);
-					activePingo--;
-					pingos[activePingo].select(true);
-				}
 
+				pingos[activePingo].select(false);
+				activePingo = getPreviousPingo(activePingo);
+				pingos[activePingo].select(true);
 			}
 		});
 
@@ -196,7 +215,7 @@ public class GameActivity extends Activity {
 				@Override
 				public synchronized void onHitComplete() {
 					progressBar.setProgress(0);
-					activePingo = 0;
+					activePingo = getNextPingo(-1);
 					pingos[activePingo].select(true);
 				}
 			};
@@ -341,13 +360,28 @@ public class GameActivity extends Activity {
 	private int getNextPingo(int currentPingo) {
 
 		int nextPingo = currentPingo;
+		boolean hasNext = false;
 
-		if (currentPingo < LIMIT && pingos[currentPingo + 1].getCanPlay()) {
-			nextPingo++;
-		} else if (currentPingo < LIMIT && !pingos[currentPingo + 1].getCanPlay()) {
-
+		for (int i = currentPingo + 1; i <= LIMIT && !hasNext; i++) {
+			if (pingos[i].getCanPlay()) {
+				hasNext = true;
+				nextPingo = i;
+			}
 		}
-
 		return nextPingo;
+	}
+
+	private int getPreviousPingo(int currentPingo) {
+
+		int previousPingo = currentPingo;
+		boolean hasNext = false;
+
+		for (int i = currentPingo - 1; i >= 0 && !hasNext; i--) {
+			if (pingos[i].getCanPlay()) {
+				hasNext = true;
+				previousPingo = i;
+			}
+		}
+		return previousPingo;
 	}
 }

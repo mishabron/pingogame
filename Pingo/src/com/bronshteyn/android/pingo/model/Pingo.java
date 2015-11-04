@@ -41,8 +41,7 @@ public class Pingo {
 		public void onHitComplete();
 	}
 
-	public Pingo(int position, int number, Boolean selected, Boolean loss,
-			Boolean win, ImageView view, ProgressBar progressBar) {
+	public Pingo(int position, int number, Boolean selected, Boolean loss, Boolean win, ImageView view, ProgressBar progressBar) {
 
 		this.position = position;
 		this.number = number;
@@ -61,14 +60,11 @@ public class Pingo {
 		view.setImageDrawable(face);
 
 		if (selected) {
-			view.setBackground(ResourcesCache.pingoBackgrounds
-					.get(PingoState.SELECTED.toString()));
+			view.setBackground(ResourcesCache.pingoBackgrounds.get(PingoState.SELECTED.toString()));
 		} else if (loss) {
-			view.setBackground(ResourcesCache.pingoBackgrounds
-					.get(PingoState.LOST.toString()));
+			view.setBackground(ResourcesCache.pingoBackgrounds.get(PingoState.LOST.toString()));
 		} else if (win) {
-			view.setBackground(ResourcesCache.pingoBackgrounds
-					.get(PingoState.WON.toString()));
+			view.setBackground(ResourcesCache.pingoBackgrounds.get(PingoState.WON.toString()));
 		} else {
 			view.setBackground(null);
 		}
@@ -83,7 +79,7 @@ public class Pingo {
 		this.number = number;
 		Drawable face = ResourcesCache.pingoFaces.get(number);
 		view.setImageDrawable(face);
-		view.setBackground(null);
+
 		loss = false;
 
 		if (number != 10) {
@@ -157,8 +153,7 @@ public class Pingo {
 		this.canPlay = canPlay;
 	}
 
-	public void rotate(String axis, int duration, int count, int angleFrom,
-			int angleTo, final AnimatorCallnack callback) {
+	public void rotate(String axis, int duration, int count, int angleFrom, int angleTo, final AnimatorCallnack callback) {
 
 		animation = ObjectAnimator.ofFloat(view, axis, angleFrom, angleTo);
 
@@ -210,14 +205,11 @@ public class Pingo {
 		selected = select;
 
 		if (selected) {
-			view.setBackground(ResourcesCache.pingoBackgrounds
-					.get(PingoState.SELECTED.toString()));
+			view.setBackground(ResourcesCache.pingoBackgrounds.get(PingoState.SELECTED.toString()));
 		} else if (loss) {
-			view.setBackground(ResourcesCache.pingoBackgrounds
-					.get(PingoState.LOST.toString()));
+			view.setBackground(ResourcesCache.pingoBackgrounds.get(PingoState.LOST.toString()));
 		} else if (win) {
-			view.setBackground(ResourcesCache.pingoBackgrounds
-					.get(PingoState.WON.toString()));
+			view.setBackground(ResourcesCache.pingoBackgrounds.get(PingoState.WON.toString()));
 		} else {
 			view.setBackground(null);
 		}
@@ -227,16 +219,14 @@ public class Pingo {
 	private void won() {
 		win = true;
 		loss = false;
-		view.setBackground(ResourcesCache.pingoBackgrounds.get(PingoState.WON
-				.toString()));
+		view.setBackground(ResourcesCache.pingoBackgrounds.get(PingoState.WON.toString()));
 		canPlay = false;
 	}
 
 	private void lost() {
 		loss = true;
 		win = false;
-		view.setBackground(ResourcesCache.pingoBackgrounds.get(PingoState.LOST
-				.toString()));
+		view.setBackground(ResourcesCache.pingoBackgrounds.get(PingoState.LOST.toString()));
 		number = 10;
 		Drawable face = ResourcesCache.pingoFaces.get(number);
 		view.setImageDrawable(face);
@@ -272,9 +262,7 @@ public class Pingo {
 			hit.setPositionValue(number);
 
 			try {
-				Cardsgame.Builder builder = new Cardsgame.Builder(
-						AndroidHttp.newCompatibleTransport(),
-						new GsonFactory(), null);
+				Cardsgame.Builder builder = new Cardsgame.Builder(AndroidHttp.newCompatibleTransport(), new GsonFactory(), null);
 				Cardsgame service = builder.build();
 				response = service.hit(hit).execute();
 			} catch (IOException e) {
