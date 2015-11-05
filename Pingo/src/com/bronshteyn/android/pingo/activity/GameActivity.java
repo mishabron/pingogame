@@ -1,5 +1,6 @@
 package com.bronshteyn.android.pingo.activity;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -21,9 +22,10 @@ import android.widget.TextView;
 import com.bronshteyn.android.pingo.R;
 import com.bronshteyn.android.pingo.model.Game;
 import com.bronshteyn.android.pingo.model.Pingo;
-import com.bronshteyn.android.pingo.model.Pingo.AnimatorCallnack;
+import com.bronshteyn.android.pingo.model.Pingo.AnimatorCallback;
 import com.bronshteyn.android.pingo.model.Pingo.HitCallback;
 
+@SuppressLint("ClickableViewAccessibility")
 public class GameActivity extends Activity {
 
 	private final String ROTATE_VERTICAL = "rotationY";
@@ -34,7 +36,6 @@ public class GameActivity extends Activity {
 	private Pingo pingo4;
 	private int activePingo;
 	private final int LIMIT = 3;
-	private final int NUMBERS = 9;
 	private Pingo[] pingos = new Pingo[4];
 
 	private int curentNUmber;
@@ -53,7 +54,7 @@ public class GameActivity extends Activity {
 		Typeface font = Typeface.createFromAsset(this.getAssets(), "fonts/addcn.ttf");
 		counter = (TextView) findViewById(R.id.counter);
 		counter.setTypeface(font);
-		counter.setText("x" + 0);
+		counter.setText("x" + Game.TOATL_TRIALS);
 
 		progressBar = (ProgressBar) findViewById(R.id.gameProgress);
 
@@ -100,10 +101,12 @@ public class GameActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				playSound(numberSelect);
-
 				pingos[activePingo].select(false);
-				activePingo = getNextPingo(activePingo);
+				int nextPingo = getNextPingo(activePingo);
+				if (nextPingo != activePingo) {
+					activePingo = nextPingo;
+					playSound(numberSelect);
+				}
 				pingos[activePingo].select(true);
 			}
 		});
@@ -122,10 +125,12 @@ public class GameActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				playSound(numberSelect);
-
 				pingos[activePingo].select(false);
-				activePingo = getPreviousPingo(activePingo);
+				int previousPingo = getPreviousPingo(activePingo);
+				if (previousPingo != activePingo) {
+					activePingo = previousPingo;
+					playSound(numberSelect);
+				}
 				pingos[activePingo].select(true);
 			}
 		});
@@ -147,13 +152,14 @@ public class GameActivity extends Activity {
 				playSound(digitSelect);
 				if (pingos[activePingo].getCanPlay()) {
 					curentNUmber = pingos[activePingo].getNumber();
-					if (curentNUmber == NUMBERS + 1 || curentNUmber == NUMBERS) {
+
+					if (curentNUmber == Game.MAX_NUMBER + 1 || curentNUmber == Game.MAX_NUMBER) {
 						curentNUmber = 0;
 					} else {
 						curentNUmber++;
 					}
 
-					AnimatorCallnack flippCallback = new AnimatorCallnack() {
+					AnimatorCallback flippCallback = new AnimatorCallback() {
 						@Override
 						public void onAnimationEnd() {
 							setFace(curentNUmber);
@@ -187,13 +193,13 @@ public class GameActivity extends Activity {
 				playSound(digitSelect);
 				if (pingos[activePingo].getCanPlay()) {
 					curentNUmber = pingos[activePingo].getNumber();
-					if (curentNUmber == NUMBERS + 1 || curentNUmber == 0) {
+					if (curentNUmber == Game.MAX_NUMBER + 1 || curentNUmber == 0) {
 						curentNUmber = 9;
 					} else {
 						curentNUmber--;
 					}
 
-					AnimatorCallnack flippCallback = new AnimatorCallnack() {
+					AnimatorCallback flippCallback = new AnimatorCallback() {
 						@Override
 						public void onAnimationEnd() {
 							setFace(curentNUmber);
@@ -231,7 +237,6 @@ public class GameActivity extends Activity {
 
 					// reset counter
 					final Game game = Game.getInstance();
-					game.setTrials(game.getTrials() + 1);
 
 					Animation slideOutBottom = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.out_bottom);
 					slideOutBottom.setAnimationListener(new Animation.AnimationListener() {
@@ -253,6 +258,19 @@ public class GameActivity extends Activity {
 
 					});
 					counter.startAnimation(slideOutBottom);
+
+					if (game.getTrials() == 0) {
+						disableControlls();
+					}
+				}
+
+				private void disableControlls() {
+					hitButton.setEnabled(false);
+					nextButton.setEnabled(false);
+					downButton.setEnabled(false);
+					upButton.setEnabled(false);
+					previousButton.setEnabled(false);
+
 				}
 			};
 			final HitCallback hitCallback2 = new HitCallback() {
@@ -263,7 +281,7 @@ public class GameActivity extends Activity {
 					if (pingos[3].getCanPlay()) {
 						pingos[3].rotate(ROTATE_HORIZONTAL, 500, -1, 360, 0, null);
 					}
-					pingos[3].pingoHit(4, hitCallback3);
+					pingos[3].pingoHit(hitCallback3);
 
 				}
 			};
@@ -275,7 +293,7 @@ public class GameActivity extends Activity {
 					if (pingos[2].getCanPlay()) {
 						pingos[2].rotate(ROTATE_HORIZONTAL, 500, -1, 360, 0, null);
 					}
-					pingos[2].pingoHit(3, hitCallback2);
+					pingos[2].pingoHit(hitCallback2);
 				}
 			};
 			final HitCallback hitCallback0 = new HitCallback() {
@@ -286,7 +304,7 @@ public class GameActivity extends Activity {
 					if (pingos[1].getCanPlay()) {
 						pingos[1].rotate(ROTATE_HORIZONTAL, 500, -1, 360, 0, null);
 					}
-					pingos[1].pingoHit(2, hitCallback1);
+					pingos[1].pingoHit(hitCallback1);
 				}
 			};
 
@@ -297,13 +315,14 @@ public class GameActivity extends Activity {
 				if (pingos[0].getCanPlay()) {
 					pingos[0].rotate(ROTATE_HORIZONTAL, 500, -1, 360, 0, null);
 				}
-				pingos[0].pingoHit(1, hitCallback0);
+				pingos[0].pingoHit(hitCallback0);
 			}
 
 		});
 
 		hitButton.setOnTouchListener(new OnTouchListener() {
 
+			@SuppressLint("ClickableViewAccessibility")
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				hitButton.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
@@ -318,7 +337,7 @@ public class GameActivity extends Activity {
 	protected void onResume() {
 		super.onResume();
 
-		final AnimatorCallnack spinn1Callback4 = new AnimatorCallnack() {
+		final AnimatorCallback spinn1Callback4 = new AnimatorCallback() {
 			@Override
 			public void onAnimationEnd() {
 
@@ -330,7 +349,7 @@ public class GameActivity extends Activity {
 			}
 		};
 
-		final AnimatorCallnack spinn1Callback3 = new AnimatorCallnack() {
+		final AnimatorCallback spinn1Callback3 = new AnimatorCallback() {
 			@Override
 			public void onAnimationEnd() {
 
@@ -343,7 +362,7 @@ public class GameActivity extends Activity {
 			}
 		};
 
-		final AnimatorCallnack spinn1Callback2 = new AnimatorCallnack() {
+		final AnimatorCallback spinn1Callback2 = new AnimatorCallback() {
 			@Override
 			public void onAnimationEnd() {
 
@@ -355,7 +374,7 @@ public class GameActivity extends Activity {
 			}
 		};
 
-		final AnimatorCallnack spinn1Callback1 = new AnimatorCallnack() {
+		final AnimatorCallback spinn1Callback1 = new AnimatorCallback() {
 			@Override
 			public void onAnimationEnd() {
 				pingos[activePingo].select(true);
