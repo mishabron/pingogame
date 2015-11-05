@@ -13,9 +13,8 @@ public class Game {
 	private Integer triesLeft3 = 4;
 	private Integer triesLeft4 = 4;
 	private Boolean cardPlayed;
-	private Integer trials = 0;
-
-	private final int TOATL_TRIALS = 4;
+	public static final int TOATL_TRIALS = 4;
+	public static final int MAX_NUMBER = 9;
 
 	protected Game() {
 
@@ -107,11 +106,18 @@ public class Game {
 	}
 
 	public Integer getTrials() {
+		int trials = triesLeft1;
+
+		if (triesLeft2 < trials) {
+			trials = triesLeft2;
+		}
+		if (triesLeft3 < trials) {
+			trials = triesLeft3;
+		}
+		if (triesLeft4 < trials) {
+			trials = triesLeft4;
+		}
+
 		return trials;
 	}
-
-	public void setTrials(Integer trials) {
-		this.trials = trials;
-	}
-
 }
