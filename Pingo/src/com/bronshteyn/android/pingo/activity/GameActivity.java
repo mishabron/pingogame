@@ -1,11 +1,13 @@
 package com.bronshteyn.android.pingo.activity;
 
+import java.io.IOException;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.HapticFeedbackConstants;
 import android.view.MotionEvent;
@@ -24,6 +26,10 @@ import com.bronshteyn.android.pingo.model.Game;
 import com.bronshteyn.android.pingo.model.Pingo;
 import com.bronshteyn.android.pingo.model.Pingo.AnimatorCallback;
 import com.bronshteyn.android.pingo.model.Pingo.HitCallback;
+import com.bronshteyn.cardsgame.Cardsgame;
+import com.bronshteyn.cardsgame.model.Card;
+import com.google.api.client.extensions.android.http.AndroidHttp;
+import com.google.api.client.json.gson.GsonFactory;
 
 @SuppressLint("ClickableViewAccessibility")
 public class GameActivity extends Activity {
@@ -38,7 +44,7 @@ public class GameActivity extends Activity {
 	private final int LIMIT = 3;
 	private Pingo[] pingos = new Pingo[4];
 
-	private int curentNUmber;
+	private int currentNumber;
 	private Button hitButton;
 
 	private ProgressBar progressBar;
@@ -51,9 +57,7 @@ public class GameActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_game);
 
-		Typeface font = Typeface.createFromAsset(this.getAssets(), "fonts/addcn.ttf");
 		counter = (TextView) findViewById(R.id.counter);
-		counter.setTypeface(font);
 		counter.setText("x" + Game.TOATL_TRIALS);
 
 		progressBar = (ProgressBar) findViewById(R.id.gameProgress);
@@ -151,18 +155,13 @@ public class GameActivity extends Activity {
 			public void onClick(View v) {
 				playSound(digitSelect);
 				if (pingos[activePingo].getCanPlay()) {
-					curentNUmber = pingos[activePingo].getNumber();
 
-					if (curentNUmber == Game.MAX_NUMBER + 1 || curentNUmber == Game.MAX_NUMBER) {
-						curentNUmber = 0;
-					} else {
-						curentNUmber++;
-					}
+					currentNumber = pingos[activePingo].getNextPingoNumber();
 
 					AnimatorCallback flippCallback = new AnimatorCallback() {
 						@Override
 						public void onAnimationEnd() {
-							setFace(curentNUmber);
+							setFace(currentNumber);
 						}
 
 						@Override
@@ -192,17 +191,13 @@ public class GameActivity extends Activity {
 			public void onClick(View v) {
 				playSound(digitSelect);
 				if (pingos[activePingo].getCanPlay()) {
-					curentNUmber = pingos[activePingo].getNumber();
-					if (curentNUmber == Game.MAX_NUMBER + 1 || curentNUmber == 0) {
-						curentNUmber = 9;
-					} else {
-						curentNUmber--;
-					}
+
+					currentNumber = pingos[activePingo].getPreviousPingoNumber();
 
 					AnimatorCallback flippCallback = new AnimatorCallback() {
 						@Override
 						public void onAnimationEnd() {
-							setFace(curentNUmber);
+							setFace(currentNumber);
 						}
 
 						@Override
@@ -265,14 +260,26 @@ public class GameActivity extends Activity {
 				}
 
 				private void disableControlls() {
-					hitButton.setEnabled(false);
+
 					nextButton.setEnabled(false);
 					downButton.setEnabled(false);
 					upButton.setEnabled(false);
 					previousButton.setEnabled(false);
 
+					hitButton.setEnabled(true);
+					hitButton.setOnClickListener(new OnClickListener() {
+
+						@Override
+						public void onClick(View v) {
+							Game game = Game.getInstance();
+							ResultAsyncTask result = new ResultAsyncTask();
+							result.execute(game);
+						}
+					});
+
 				}
 			};
+
 			final HitCallback hitCallback2 = new HitCallback() {
 
 				@Override
@@ -438,5 +445,55 @@ public class GameActivity extends Activity {
 			}
 		}
 		return previousPingo;
+	}
+
+	private class ResultAsyncTask extends AsyncTask<Game, Integer, Card> {
+
+		@Override
+		protected Card doInBackground(Game... games) {
+
+			Card response = null;
+
+			Game game = games[0];
+
+			try {
+				Cardsgame.Builder builder = new Cardsgame.Builder(AndroidHttp.newCompatibleTransport(), new GsonFactory(), null);
+				Cardsgame service = builder.build();
+				response = service.getPlayedCard(game.getCardId()).execute();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			// simulate delay
+			for (int i = 0; i < progressBar.getMax(); i++) {
+				publishProgress(i);
+
+				// Do some long loading things
+				try {
+					Thread.sleep(50);
+				} catch (InterruptedException ignore) {
+				}
+			}
+			return response;
+		}
+
+		@Override
+		protected void onProgressUpdate(Integer... values) {
+			super.onProgressUpdate(values);
+			progressBar.setProgress(values[0]);
+		}
+
+		@Override
+		protected void onPostExecute(Card result) {
+			progressBar.setProgress(0);
+
+			pingos[0].setNumber(result.getNumber1());
+			pingos[1].setNumber(result.getNumber2());
+			pingos[2].setNumber(result.getNumber3());
+			pingos[3].setNumber(result.getNumber4());
+
+		}
+
 	}
 }

@@ -5,7 +5,6 @@ import java.io.IOException;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.os.AsyncTask;
@@ -47,12 +46,9 @@ public class AuthActivity extends Activity {
 		setContentView(R.layout.activity_auth);
 
 		final EditText cardNumberInput = (EditText) findViewById(R.id.cardNumber);
-		Typeface font = Typeface.createFromAsset(this.getAssets(), "fonts/addcn.ttf");
-		cardNumberInput.setTypeface(font);
 
 		message = (TextView) findViewById(R.id.message);
 		message.setText("");
-		message.setTypeface(font);
 
 		progressBar = (ProgressBar) findViewById(R.id.progressBar1);
 

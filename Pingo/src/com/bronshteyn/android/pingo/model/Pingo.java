@@ -11,6 +11,8 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
+import com.bronshteyn.android.pingo.data.CircularLinkedList;
+import com.bronshteyn.android.pingo.data.LinkedNode;
 import com.bronshteyn.cardsgame.Cardsgame;
 import com.bronshteyn.cardsgame.model.HitRequest;
 import com.bronshteyn.cardsgame.model.HitResponse;
@@ -31,7 +33,9 @@ public class Pingo {
 	private HitCallback hitCallback;
 	private ProgressBar progressBar;
 
-	public interface AnimatorCallnack {
+	private CircularLinkedList<Integer> numbers;
+
+	public interface AnimatorCallback {
 		public void onAnimationEnd();
 
 		public void onAnimationStart();
@@ -50,6 +54,17 @@ public class Pingo {
 		this.win = win;
 		this.view = view;
 		this.progressBar = progressBar;
+
+		numbers = new CircularLinkedList<Integer>(new LinkedNode<Integer>(0));
+		numbers.add(new LinkedNode<Integer>(1));
+		numbers.add(new LinkedNode<Integer>(2));
+		numbers.add(new LinkedNode<Integer>(3));
+		numbers.add(new LinkedNode<Integer>(4));
+		numbers.add(new LinkedNode<Integer>(5));
+		numbers.add(new LinkedNode<Integer>(6));
+		numbers.add(new LinkedNode<Integer>(7));
+		numbers.add(new LinkedNode<Integer>(8));
+		numbers.add(new LinkedNode<Integer>(9));
 
 		setUI();
 	}
@@ -76,6 +91,7 @@ public class Pingo {
 	}
 
 	public void setNumber(int number) {
+
 		this.number = number;
 		Drawable face = ResourcesCache.pingoFaces.get(number);
 		view.setImageDrawable(face);
@@ -113,14 +129,6 @@ public class Pingo {
 		this.loss = los;
 	}
 
-	public ImageView getView() {
-		return view;
-	}
-
-	public void setView(ImageView view) {
-		this.view = view;
-	}
-
 	public Boolean getWin() {
 		return win;
 	}
@@ -131,10 +139,6 @@ public class Pingo {
 
 	public Boolean isSet() {
 		return set;
-	}
-
-	public void setSet(Boolean set) {
-		this.set = set;
 	}
 
 	public ObjectAnimator getAnimation() {
@@ -153,7 +157,7 @@ public class Pingo {
 		this.canPlay = canPlay;
 	}
 
-	public void rotate(String axis, int duration, int count, int angleFrom, int angleTo, final AnimatorCallnack callback) {
+	public void rotate(String axis, int duration, int count, int angleFrom, int angleTo, final AnimatorCallback callback) {
 
 		animation = ObjectAnimator.ofFloat(view, axis, angleFrom, angleTo);
 
@@ -228,12 +232,15 @@ public class Pingo {
 		win = false;
 		view.setBackground(ResourcesCache.pingoBackgrounds.get(PingoState.LOST.toString()));
 		number = 10;
+
+		numbers.remove();
+
 		Drawable face = ResourcesCache.pingoFaces.get(number);
 		view.setImageDrawable(face);
 		set = false;
 	}
 
-	public void pingoHit(int position, HitCallback hitCallback) {
+	public void pingoHit(HitCallback hitCallback) {
 
 		this.hitCallback = hitCallback;
 
@@ -319,6 +326,33 @@ public class Pingo {
 				break;
 			}
 		}
+	}
+
+	public int getNextPingoNumber() {
+
+		LinkedNode<Integer> numberIndex;
+
+		if (number == 10) {
+			numberIndex = numbers.getTail();
+		} else {
+			numberIndex = numbers.getNextNode();
+		}
+
+		return numberIndex.getContent();
+	}
+
+	public int getPreviousPingoNumber() {
+
+		LinkedNode<Integer> numberIndex;
+
+		if (number == 10) {
+			numberIndex = numbers.getTail();
+			numberIndex = numbers.getPreviousNode();
+		} else {
+			numberIndex = numbers.getPreviousNode();
+		}
+
+		return numberIndex.getContent();
 	}
 
 }
