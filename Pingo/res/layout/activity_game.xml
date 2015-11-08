@@ -23,7 +23,7 @@
             android:layout_height="65dp"
             android:layout_alignParentBottom="true"
             android:layout_toStartOf="@+id/pingo2"
-            android:layout_marginBottom="28dp"
+            android:layout_marginBottom="30dp"
             android:src="@drawable/pingo" 
             android:background="@drawable/green_ring" />
         
@@ -33,7 +33,7 @@
             android:layout_height="65dp"
             android:layout_alignParentBottom="true"
             android:layout_toStartOf="@+id/dummyTop"
-            android:layout_marginBottom="28dp"
+            android:layout_marginBottom="30dp"
             android:src="@drawable/seven" 
             android:background="@drawable/red_ring"   />        
         
@@ -43,7 +43,7 @@
             android:layout_height="65dp"
             android:layout_alignParentBottom="true"
             android:layout_toEndOf="@+id/dummyTop"
-            android:layout_marginBottom="28dp"
+            android:layout_marginBottom="30dp"
             android:src="@drawable/seven" 
            android:background="@drawable/green_ring" /> 
                     
@@ -53,28 +53,14 @@
             android:layout_height="65dp"
             android:layout_alignParentBottom="true"
             android:layout_toEndOf="@+id/pingo3"
-            android:layout_marginBottom="28dp"
+            android:layout_marginBottom="30dp"
             android:src="@drawable/seven" />
-
-        <ProgressBar
-            android:id="@+id/gameProgress"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="fill_parent"
-            android:layout_height="4dp"
-            android:layout_above="@+id/pingo1"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="50dp"
-            android:layout_marginEnd="68dp"
-            android:layout_marginStart="68dp"
-            android:indeterminateOnly="false"
-            android:max="50" />
 
 	    <RelativeLayout
 	        android:layout_width="38dp"
 	        android:layout_height="24dp"
 	        android:layout_alignParentBottom="true"
-	        android:layout_alignParentEnd="true"
-	        android:layout_marginEnd="60dp"
+	        android:layout_alignEnd="@+id/pingo4"
 	        android:background="@drawable/bg_box"
 	        android:orientation="vertical" >
 
@@ -87,6 +73,20 @@
 	            android:textColor="#808080"
 	            android:textSize="18sp" />
 	    </RelativeLayout>
+
+	    <ProgressBar
+	        android:id="@+id/gameProgress"
+	        style="?android:attr/progressBarStyleHorizontal"
+	        android:layout_width="fill_parent"
+	        android:layout_height="4dp"
+	        android:layout_alignParentTop="true"
+	        android:layout_centerHorizontal="true"
+           	android:layout_marginTop="158dp"	        
+	        android:layout_marginEnd="68dp"
+	        android:layout_marginStart="68dp"
+	        android:indeterminateOnly="false"
+	        android:max="50"
+	        android:progressDrawable="@drawable/progress_bar" />
 
     </RelativeLayout>
 

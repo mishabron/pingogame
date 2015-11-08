@@ -22,7 +22,8 @@
             android:layout_centerVertical="true"
             android:layout_marginEnd="10dp"
             android:layout_marginStart="10dp"
-            android:indeterminateOnly="false"
+            android:indeterminateOnly="false"            
+            android:progressDrawable="@drawable/progress_bar"
             android:max="50" />
     </RelativeLayout>
     
