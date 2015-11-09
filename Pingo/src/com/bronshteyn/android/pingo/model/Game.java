@@ -69,7 +69,7 @@ public class Game {
 		return triesLeft1;
 	}
 
-	public void setTriesLeft1(Integer triesLeft1) {
+	public synchronized void setTriesLeft1(Integer triesLeft1) {
 		this.triesLeft1 = triesLeft1;
 	}
 
@@ -77,7 +77,7 @@ public class Game {
 		return triesLeft2;
 	}
 
-	public void setTriesLeft2(Integer triesLeft2) {
+	public synchronized void setTriesLeft2(Integer triesLeft2) {
 		this.triesLeft2 = triesLeft2;
 	}
 
@@ -85,7 +85,7 @@ public class Game {
 		return triesLeft3;
 	}
 
-	public void setTriesLeft3(Integer triesLeft3) {
+	public synchronized void setTriesLeft3(Integer triesLeft3) {
 		this.triesLeft3 = triesLeft3;
 	}
 
@@ -93,7 +93,7 @@ public class Game {
 		return triesLeft4;
 	}
 
-	public void setTriesLeft4(Integer triesLeft4) {
+	public synchronized void setTriesLeft4(Integer triesLeft4) {
 		this.triesLeft4 = triesLeft4;
 	}
 
@@ -105,7 +105,7 @@ public class Game {
 		this.cardPlayed = cardPlayed;
 	}
 
-	public Integer getTrials() {
+	public synchronized Integer getTrials() {
 		int trials = triesLeft1;
 
 		if (triesLeft2 < trials) {

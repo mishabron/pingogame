@@ -8,7 +8,6 @@ import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
-import android.media.MediaPlayer.OnCompletionListener;
 import android.os.AsyncTask;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageView;
@@ -117,14 +116,6 @@ public class Pingo {
 		this.position = position;
 	}
 
-	public Boolean getSelected() {
-		return selected;
-	}
-
-	public void setSelected(Boolean selected) {
-		this.selected = selected;
-	}
-
 	public Boolean getLoss() {
 		return loss;
 	}
@@ -143,14 +134,6 @@ public class Pingo {
 
 	public Boolean isSet() {
 		return set;
-	}
-
-	public ObjectAnimator getAnimation() {
-		return animation;
-	}
-
-	public void setAnimation(ObjectAnimator animation) {
-		this.animation = animation;
 	}
 
 	public Boolean getCanPlay() {
@@ -275,14 +258,6 @@ public class Pingo {
 
 			mp = MediaPlayer.create(context, spin);
 			mp.setLooping(true);
-			mp.setOnCompletionListener(new OnCompletionListener() {
-
-				@Override
-				public void onCompletion(MediaPlayer mp) {
-					mp.release();
-					mp = null;
-				}
-			});
 			mp.start();
 
 			Game game = games[0];
@@ -324,7 +299,13 @@ public class Pingo {
 		@Override
 		protected void onPostExecute(HitResponse result) {
 
-			mp.stop();
+			if (mp != null && mp.isPlaying() && mp.isLooping()) {
+
+				mp.stop();
+				mp.release();
+
+			}
+
 			stopRotation();
 			hitCallback.onHitComplete();
 

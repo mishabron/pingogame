@@ -52,15 +52,23 @@ public class GameActivity extends Activity {
 	private int numberSelect;
 	private int digitSelect;
 	private TextView counter;
+	private TextView pin;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_game);
 
-		Typeface font = Typeface.createFromAsset(this.getAssets(), "fonts/ftrosecu.ttf");
-
 		Game game = Game.getInstance();
+
+		pin = (TextView) findViewById(R.id.pin);
+		pin.setText("");
+
+		TextView cardNumber = (TextView) findViewById(R.id.cardNumber);
+		String hiddenCardID = String.valueOf(game.getCardId());
+		cardNumber.setText("Card #........." + hiddenCardID.substring(9, 12));
+
+		Typeface font = Typeface.createFromAsset(this.getAssets(), "fonts/ftrosecu.ttf");
 		counter = (TextView) findViewById(R.id.counter);
 		counter.setTypeface(font);
 		counter.setText("" + game.getTrials());
@@ -250,6 +258,9 @@ public class GameActivity extends Activity {
 							counter.setText("" + game.getTrials());
 							Animation slideInTop = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.in_top);
 							counter.startAnimation(slideInTop);
+							if (game.getTrials() == 0) {
+								disableControlls();
+							}
 						}
 
 						@Override
@@ -258,10 +269,6 @@ public class GameActivity extends Activity {
 
 					});
 					counter.startAnimation(slideOutBottom);
-
-					if (game.getTrials() == 0) {
-						disableControlls();
-					}
 				}
 
 				private void disableControlls() {
@@ -330,6 +337,8 @@ public class GameActivity extends Activity {
 					pingos[0].rotate(ROTATE_HORIZONTAL, 450, -1, 360, 0, null);
 				}
 				pingos[0].pingoHit(hitCallback0, GameActivity.this, progressBar);
+
+				pin.setText("" + pingos[0].getNumber() + pingos[1].getNumber() + pingos[2].getNumber() + pingos[3].getNumber());
 			}
 
 		});
@@ -495,19 +504,19 @@ public class GameActivity extends Activity {
 			progressBar.setProgress(0);
 
 			if (pingos[0].getLoss()) {
-				pingos[0].rotate(ROTATE_HORIZONTAL, 700, 2, 360, 0, null);
+				pingos[0].rotate(ROTATE_HORIZONTAL, 700, 1, 360, 0, null);
 				pingos[0].setNumber(result.getNumber1());
 			}
 			if (pingos[1].getLoss()) {
-				pingos[1].rotate(ROTATE_HORIZONTAL, 700, 2, 360, 0, null);
+				pingos[1].rotate(ROTATE_HORIZONTAL, 700, 1, 360, 0, null);
 				pingos[1].setNumber(result.getNumber2());
 			}
 			if (pingos[2].getLoss()) {
-				pingos[2].rotate(ROTATE_HORIZONTAL, 700, 2, 360, 0, null);
+				pingos[2].rotate(ROTATE_HORIZONTAL, 700, 1, 360, 0, null);
 				pingos[2].setNumber(result.getNumber3());
 			}
 			if (pingos[3].getLoss()) {
-				pingos[3].rotate(ROTATE_HORIZONTAL, 700, 2, 360, 0, null);
+				pingos[3].rotate(ROTATE_HORIZONTAL, 700, 1, 360, 0, null);
 				pingos[3].setNumber(result.getNumber4());
 			}
 
