@@ -5,16 +5,19 @@ public class CircularLinkedList<T> {
 	private LinkedNode<T> tail = null;
 	private LinkedNode<T> pointer = null;
 
-	public CircularLinkedList(LinkedNode<T> tail) {
+	public CircularLinkedList(T content) {
 
-		this.tail = tail;
+		this.tail = new LinkedNode<T>(content);
+
 		this.tail.setPrevious(this.tail);
 		this.tail.setNext(this.tail);
 		this.pointer = this.tail;
 
 	}
 
-	public void add(LinkedNode<T> node) {
+	public void add(T content) {
+
+		LinkedNode<T> node = new LinkedNode<T>(content);
 
 		LinkedNode<T> headNode = tail.getPrevious();
 		headNode.setNext(node);
@@ -24,27 +27,27 @@ public class CircularLinkedList<T> {
 
 	}
 
-	public LinkedNode<T> getTail() {
+	public T getTail() {
 
 		pointer = tail;
-		return tail;
+		return tail.getContent();
 	}
 
-	public LinkedNode<T> getNextNode() {
+	public T getNextNode() {
 
 		pointer = pointer.getNext();
 
-		return pointer;
+		return pointer.getContent();
 	}
 
-	public LinkedNode<T> getPreviousNode() {
+	public T getPreviousNode() {
 
 		pointer = pointer.getPrevious();
 
-		return pointer;
+		return pointer.getContent();
 	}
 
-	public LinkedNode<T> remove() {
+	public T remove() {
 
 		LinkedNode<T> node = pointer;
 
@@ -57,7 +60,7 @@ public class CircularLinkedList<T> {
 
 		pointer = pointer.getNext();
 
-		return node;
+		return node.getContent();
 
 	}
 

@@ -5,14 +5,17 @@ import java.io.IOException;
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
 import android.animation.ObjectAnimator;
+import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnCompletionListener;
 import android.os.AsyncTask;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
+import com.bronshteyn.android.pingo.R;
 import com.bronshteyn.android.pingo.data.CircularLinkedList;
-import com.bronshteyn.android.pingo.data.LinkedNode;
 import com.bronshteyn.cardsgame.Cardsgame;
 import com.bronshteyn.cardsgame.model.HitRequest;
 import com.bronshteyn.cardsgame.model.HitResponse;
@@ -31,9 +34,9 @@ public class Pingo {
 	private Boolean canPlay = true;
 	private ObjectAnimator animation;
 	private HitCallback hitCallback;
-	private ProgressBar progressBar;
 
 	private CircularLinkedList<Integer> numbers;
+	private int spin;
 
 	public interface AnimatorCallback {
 		public void onAnimationEnd();
@@ -45,7 +48,9 @@ public class Pingo {
 		public void onHitComplete();
 	}
 
-	public Pingo(int position, int number, Boolean selected, Boolean loss, Boolean win, ImageView view, ProgressBar progressBar) {
+	public Pingo(int position, int number, Boolean selected, Boolean loss, Boolean win, ImageView view) {
+
+		spin = R.raw.spin;
 
 		this.position = position;
 		this.number = number;
@@ -53,18 +58,17 @@ public class Pingo {
 		this.loss = loss;
 		this.win = win;
 		this.view = view;
-		this.progressBar = progressBar;
 
-		numbers = new CircularLinkedList<Integer>(new LinkedNode<Integer>(0));
-		numbers.add(new LinkedNode<Integer>(1));
-		numbers.add(new LinkedNode<Integer>(2));
-		numbers.add(new LinkedNode<Integer>(3));
-		numbers.add(new LinkedNode<Integer>(4));
-		numbers.add(new LinkedNode<Integer>(5));
-		numbers.add(new LinkedNode<Integer>(6));
-		numbers.add(new LinkedNode<Integer>(7));
-		numbers.add(new LinkedNode<Integer>(8));
-		numbers.add(new LinkedNode<Integer>(9));
+		numbers = new CircularLinkedList<Integer>(0);
+		numbers.add(1);
+		numbers.add(2);
+		numbers.add(3);
+		numbers.add(4);
+		numbers.add(5);
+		numbers.add(6);
+		numbers.add(7);
+		numbers.add(8);
+		numbers.add(9);
 
 		setUI();
 	}
@@ -184,7 +188,6 @@ public class Pingo {
 
 			@Override
 			public void onAnimationCancel(Animator animation) {
-				// TODO Auto-generated method stub
 
 			}
 		});
@@ -233,20 +236,21 @@ public class Pingo {
 		view.setBackground(ResourcesCache.pingoBackgrounds.get(PingoState.LOST.toString()));
 		number = 10;
 
-		numbers.remove();
+		Integer node = numbers.remove();
+		node = null;
 
 		Drawable face = ResourcesCache.pingoFaces.get(number);
 		view.setImageDrawable(face);
 		set = false;
 	}
 
-	public void pingoHit(HitCallback hitCallback) {
+	public void pingoHit(HitCallback hitCallback, Context context, ProgressBar progressBar) {
 
 		this.hitCallback = hitCallback;
 
 		if (canPlay) {
 			Game game = Game.getInstance();
-			HitAsyncTask hitTask = new HitAsyncTask();
+			HitAsyncTask hitTask = new HitAsyncTask(context, progressBar);
 			hitTask.execute(game);
 		} else {
 			hitCallback.onHitComplete();
@@ -255,10 +259,31 @@ public class Pingo {
 
 	private class HitAsyncTask extends AsyncTask<Game, Integer, HitResponse> {
 
+		private Context context;
+		private MediaPlayer mp;
+		private ProgressBar progressBar;
+
+		public HitAsyncTask(Context context, ProgressBar progressBar) {
+			this.context = context;
+			this.progressBar = progressBar;
+		}
+
 		@Override
 		protected HitResponse doInBackground(Game... games) {
 
 			HitResponse response = null;
+
+			mp = MediaPlayer.create(context, spin);
+			mp.setLooping(true);
+			mp.setOnCompletionListener(new OnCompletionListener() {
+
+				@Override
+				public void onCompletion(MediaPlayer mp) {
+					mp.release();
+					mp = null;
+				}
+			});
+			mp.start();
 
 			Game game = games[0];
 			// create hit
@@ -283,7 +308,7 @@ public class Pingo {
 
 				// Do some long loading things
 				try {
-					Thread.sleep(50);
+					Thread.sleep(100);
 				} catch (InterruptedException ignore) {
 				}
 			}
@@ -299,6 +324,7 @@ public class Pingo {
 		@Override
 		protected void onPostExecute(HitResponse result) {
 
+			mp.stop();
 			stopRotation();
 			hitCallback.onHitComplete();
 
@@ -330,7 +356,7 @@ public class Pingo {
 
 	public int getNextPingoNumber() {
 
-		LinkedNode<Integer> numberIndex;
+		Integer numberIndex;
 
 		if (number == 10) {
 			numberIndex = numbers.getTail();
@@ -338,12 +364,12 @@ public class Pingo {
 			numberIndex = numbers.getNextNode();
 		}
 
-		return numberIndex.getContent();
+		return numberIndex;
 	}
 
 	public int getPreviousPingoNumber() {
 
-		LinkedNode<Integer> numberIndex;
+		Integer numberIndex;
 
 		if (number == 10) {
 			numberIndex = numbers.getTail();
@@ -352,7 +378,7 @@ public class Pingo {
 			numberIndex = numbers.getPreviousNode();
 		}
 
-		return numberIndex.getContent();
+		return numberIndex;
 	}
 
 }

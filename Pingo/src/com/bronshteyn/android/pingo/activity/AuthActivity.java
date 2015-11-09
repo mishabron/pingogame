@@ -83,7 +83,8 @@ public class AuthActivity extends Activity {
 
 		private Context context;
 		private Long cardId;
-		Thread progressThread;
+		private Thread progressThread;
+		private Exception exception = null;
 
 		public AuthinticateAsyncTask(Context context) {
 			this.context = context;
@@ -106,6 +107,7 @@ public class AuthActivity extends Activity {
 				response = service.authinticate(request).execute();
 			} catch (IOException e) {
 				e.printStackTrace();
+				exception = e;
 			}
 
 			return response;
@@ -116,13 +118,17 @@ public class AuthActivity extends Activity {
 
 			progressThread.interrupt();
 
-			if (result.getAuthinticated()) {
-				message.setText("Authinticated");
-				Game game = Game.getInstance();
-				game.init(result);
-				playTransitionSound();
+			if (exception == null) {
+				if (result.getAuthinticated()) {
+					message.setText("Authinticated");
+					Game game = Game.getInstance();
+					game.init(result);
+					playTransitionSound();
+				} else {
+					message.setText("Card Not Valid");
+				}
 			} else {
-				message.setText("Card Not Valid");
+				message.setText("Network Error");
 			}
 		}
 	}

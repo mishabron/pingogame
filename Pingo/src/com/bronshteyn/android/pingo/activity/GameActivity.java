@@ -5,6 +5,7 @@ import java.io.IOException;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.os.AsyncTask;
@@ -57,18 +58,22 @@ public class GameActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_game);
 
+		Typeface font = Typeface.createFromAsset(this.getAssets(), "fonts/ftrosecu.ttf");
+
+		Game game = Game.getInstance();
 		counter = (TextView) findViewById(R.id.counter);
-		counter.setText("x" + Game.TOATL_TRIALS);
+		counter.setTypeface(font);
+		counter.setText("" + game.getTrials());
 
 		progressBar = (ProgressBar) findViewById(R.id.gameProgress);
 
 		digitSelect = R.raw.number_select;
 		numberSelect = R.raw.digit_select;
 
-		pingo1 = new Pingo(1, 10, false, false, false, (ImageView) findViewById(R.id.pingo1), progressBar);
-		pingo2 = new Pingo(2, 10, false, false, false, (ImageView) findViewById(R.id.pingo2), progressBar);
-		pingo3 = new Pingo(3, 10, false, false, false, (ImageView) findViewById(R.id.pingo3), progressBar);
-		pingo4 = new Pingo(4, 10, false, false, false, (ImageView) findViewById(R.id.pingo4), progressBar);
+		pingo1 = new Pingo(1, 10, false, false, false, (ImageView) findViewById(R.id.pingo1));
+		pingo2 = new Pingo(2, 10, false, false, false, (ImageView) findViewById(R.id.pingo2));
+		pingo3 = new Pingo(3, 10, false, false, false, (ImageView) findViewById(R.id.pingo3));
+		pingo4 = new Pingo(4, 10, false, false, false, (ImageView) findViewById(R.id.pingo4));
 
 		pingos[0] = pingo1;
 		pingos[1] = pingo2;
@@ -242,7 +247,7 @@ public class GameActivity extends Activity {
 
 						@Override
 						public void onAnimationEnd(Animation animation) {
-							counter.setText("x" + game.getTrials());
+							counter.setText("" + game.getTrials());
 							Animation slideInTop = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.in_top);
 							counter.startAnimation(slideInTop);
 						}
@@ -271,9 +276,11 @@ public class GameActivity extends Activity {
 
 						@Override
 						public void onClick(View v) {
+
 							Game game = Game.getInstance();
 							ResultAsyncTask result = new ResultAsyncTask();
 							result.execute(game);
+							hitButton.setEnabled(false);
 						}
 					});
 
@@ -286,9 +293,9 @@ public class GameActivity extends Activity {
 				public synchronized void onHitComplete() {
 					progressBar.setProgress(0);
 					if (pingos[3].getCanPlay()) {
-						pingos[3].rotate(ROTATE_HORIZONTAL, 500, -1, 360, 0, null);
+						pingos[3].rotate(ROTATE_HORIZONTAL, 450, -1, 360, 0, null);
 					}
-					pingos[3].pingoHit(hitCallback3);
+					pingos[3].pingoHit(hitCallback3, GameActivity.this, progressBar);
 
 				}
 			};
@@ -298,9 +305,9 @@ public class GameActivity extends Activity {
 				public synchronized void onHitComplete() {
 					progressBar.setProgress(0);
 					if (pingos[2].getCanPlay()) {
-						pingos[2].rotate(ROTATE_HORIZONTAL, 500, -1, 360, 0, null);
+						pingos[2].rotate(ROTATE_HORIZONTAL, 450, -1, 360, 0, null);
 					}
-					pingos[2].pingoHit(hitCallback2);
+					pingos[2].pingoHit(hitCallback2, GameActivity.this, progressBar);
 				}
 			};
 			final HitCallback hitCallback0 = new HitCallback() {
@@ -309,9 +316,9 @@ public class GameActivity extends Activity {
 				public synchronized void onHitComplete() {
 					progressBar.setProgress(0);
 					if (pingos[1].getCanPlay()) {
-						pingos[1].rotate(ROTATE_HORIZONTAL, 500, -1, 360, 0, null);
+						pingos[1].rotate(ROTATE_HORIZONTAL, 450, -1, 360, 0, null);
 					}
-					pingos[1].pingoHit(hitCallback1);
+					pingos[1].pingoHit(hitCallback1, GameActivity.this, progressBar);
 				}
 			};
 
@@ -320,9 +327,9 @@ public class GameActivity extends Activity {
 
 				hitButton.setEnabled(false);
 				if (pingos[0].getCanPlay()) {
-					pingos[0].rotate(ROTATE_HORIZONTAL, 500, -1, 360, 0, null);
+					pingos[0].rotate(ROTATE_HORIZONTAL, 450, -1, 360, 0, null);
 				}
-				pingos[0].pingoHit(hitCallback0);
+				pingos[0].pingoHit(hitCallback0, GameActivity.this, progressBar);
 			}
 
 		});
@@ -453,7 +460,6 @@ public class GameActivity extends Activity {
 		protected Card doInBackground(Game... games) {
 
 			Card response = null;
-
 			Game game = games[0];
 
 			try {
@@ -488,12 +494,24 @@ public class GameActivity extends Activity {
 		protected void onPostExecute(Card result) {
 			progressBar.setProgress(0);
 
-			pingos[0].setNumber(result.getNumber1());
-			pingos[1].setNumber(result.getNumber2());
-			pingos[2].setNumber(result.getNumber3());
-			pingos[3].setNumber(result.getNumber4());
+			if (pingos[0].getLoss()) {
+				pingos[0].rotate(ROTATE_HORIZONTAL, 700, 2, 360, 0, null);
+				pingos[0].setNumber(result.getNumber1());
+			}
+			if (pingos[1].getLoss()) {
+				pingos[1].rotate(ROTATE_HORIZONTAL, 700, 2, 360, 0, null);
+				pingos[1].setNumber(result.getNumber2());
+			}
+			if (pingos[2].getLoss()) {
+				pingos[2].rotate(ROTATE_HORIZONTAL, 700, 2, 360, 0, null);
+				pingos[2].setNumber(result.getNumber3());
+			}
+			if (pingos[3].getLoss()) {
+				pingos[3].rotate(ROTATE_HORIZONTAL, 700, 2, 360, 0, null);
+				pingos[3].setNumber(result.getNumber4());
+			}
 
 		}
-
 	}
+
 }
