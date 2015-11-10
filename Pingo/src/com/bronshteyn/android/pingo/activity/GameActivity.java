@@ -66,7 +66,7 @@ public class GameActivity extends Activity {
 
 		TextView cardNumber = (TextView) findViewById(R.id.cardNumber);
 		String hiddenCardID = String.valueOf(game.getCardId());
-		cardNumber.setText("Card #........." + hiddenCardID.substring(9, 12));
+		cardNumber.setText("Card No........" + hiddenCardID.substring(8, 12));
 
 		Typeface font = Typeface.createFromAsset(this.getAssets(), "fonts/ftrosecu.ttf");
 		counter = (TextView) findViewById(R.id.counter);
@@ -78,10 +78,10 @@ public class GameActivity extends Activity {
 		digitSelect = R.raw.number_select;
 		numberSelect = R.raw.digit_select;
 
-		pingo1 = new Pingo(1, 10, false, false, false, (ImageView) findViewById(R.id.pingo1));
-		pingo2 = new Pingo(2, 10, false, false, false, (ImageView) findViewById(R.id.pingo2));
-		pingo3 = new Pingo(3, 10, false, false, false, (ImageView) findViewById(R.id.pingo3));
-		pingo4 = new Pingo(4, 10, false, false, false, (ImageView) findViewById(R.id.pingo4));
+		pingo1 = new Pingo(1, game.getNumber1(), false, (ImageView) findViewById(R.id.pingo1));
+		pingo2 = new Pingo(2, game.getNumber2(), false, (ImageView) findViewById(R.id.pingo2));
+		pingo3 = new Pingo(3, game.getNumber3(), false, (ImageView) findViewById(R.id.pingo3));
+		pingo4 = new Pingo(4, game.getNumber4(), false, (ImageView) findViewById(R.id.pingo4));
 
 		pingos[0] = pingo1;
 		pingos[1] = pingo2;
@@ -239,6 +239,14 @@ public class GameActivity extends Activity {
 
 				@Override
 				public synchronized void onHitComplete() {
+
+					// remove red ring
+					for (int i = 0; i < 4; i++) {
+						if (pingos[i].getLoss()) {
+							pingos[i].removeLossRing();
+						}
+					}
+
 					progressBar.setProgress(0);
 					activePingo = getNextPingo(-1);
 					pingos[activePingo].select(true);

@@ -12,6 +12,10 @@ public class Game {
 	private Integer triesLeft2 = 4;
 	private Integer triesLeft3 = 4;
 	private Integer triesLeft4 = 4;
+	private Integer number1;
+	private Integer number2;
+	private Integer number3;
+	private Integer number4;
 	private Boolean cardPlayed;
 	public static final int TOATL_TRIALS = 4;
 	public static final int MAX_NUMBER = 9;
@@ -39,6 +43,10 @@ public class Game {
 		triesLeft2 = result.getTriesleft2();
 		triesLeft3 = result.getTriesleft3();
 		triesLeft4 = result.getTriesleft4();
+		number1 = result.getNumber1();
+		number2 = result.getNumber2();
+		number3 = result.getNumber3();
+		number4 = result.getNumber4();
 	}
 
 	public Long getCardId() {
@@ -103,6 +111,38 @@ public class Game {
 
 	public void setCardPlayed(Boolean cardPlayed) {
 		this.cardPlayed = cardPlayed;
+	}
+
+	public Integer getNumber1() {
+		return number1;
+	}
+
+	public void setNumber1(Integer number1) {
+		this.number1 = number1;
+	}
+
+	public Integer getNumber2() {
+		return number2;
+	}
+
+	public void setNumber2(Integer number2) {
+		this.number2 = number2;
+	}
+
+	public Integer getNumber3() {
+		return number3;
+	}
+
+	public void setNumber3(Integer number3) {
+		this.number3 = number3;
+	}
+
+	public Integer getNumber4() {
+		return number4;
+	}
+
+	public void setNumber4(Integer number4) {
+		this.number4 = number4;
 	}
 
 	public synchronized Integer getTrials() {

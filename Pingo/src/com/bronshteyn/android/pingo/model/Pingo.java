@@ -47,15 +47,27 @@ public class Pingo {
 		public void onHitComplete();
 	}
 
-	public Pingo(int position, int number, Boolean selected, Boolean loss, Boolean win, ImageView view) {
+	public Pingo(int position, int number, Boolean selected, ImageView view) {
 
 		spin = R.raw.spin;
 
 		this.position = position;
 		this.number = number;
 		this.selected = selected;
-		this.loss = loss;
-		this.win = win;
+
+		// restore state from previous game
+		if (number == 10) {
+			this.loss = false;
+			this.win = false;
+			canPlay = true;
+			set = false;
+		} else {
+			this.loss = false;
+			this.win = true;
+			canPlay = false;
+			set = true;
+		}
+
 		this.view = view;
 
 		numbers = new CircularLinkedList<Integer>(0);
@@ -179,14 +191,12 @@ public class Pingo {
 		animation.setRepeatCount(count);
 		animation.setInterpolator(new AccelerateDecelerateInterpolator());
 		animation.start();
-
 	}
 
 	public void stopRotation() {
 
 		if (animation != null) {
 			animation.end();
-
 		}
 	}
 
@@ -196,14 +206,11 @@ public class Pingo {
 
 		if (selected) {
 			view.setBackground(ResourcesCache.pingoBackgrounds.get(PingoState.SELECTED.toString()));
-		} else if (loss) {
-			view.setBackground(ResourcesCache.pingoBackgrounds.get(PingoState.LOST.toString()));
 		} else if (win) {
 			view.setBackground(ResourcesCache.pingoBackgrounds.get(PingoState.WON.toString()));
 		} else {
 			view.setBackground(null);
 		}
-
 	}
 
 	private void won() {
@@ -303,12 +310,9 @@ public class Pingo {
 
 				mp.stop();
 				mp.release();
-
 			}
 
 			stopRotation();
-			hitCallback.onHitComplete();
-
 			Game game = Game.getInstance();
 
 			if (result.getGuessed()) {
@@ -332,6 +336,8 @@ public class Pingo {
 				game.setTriesLeft4(4 - result.getTryNumber());
 				break;
 			}
+
+			hitCallback.onHitComplete();
 		}
 	}
 
@@ -360,6 +366,12 @@ public class Pingo {
 		}
 
 		return numberIndex;
+	}
+
+	public void removeLossRing() {
+
+		view.setBackground(null);
+
 	}
 
 }
